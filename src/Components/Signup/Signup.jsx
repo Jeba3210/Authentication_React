@@ -33,8 +33,10 @@
 
 // export default Signup
 
-import React,{ useState } from "react"
+import React,{ useEffect, useState } from "react"
 import "./form.css"
+import { v4 as uuid } from "uuid";
+import { useNavigate } from "react-router-dom";
 
 
 
@@ -47,6 +49,16 @@ function SignUp(){
     const [validatedEmail,setValidatedEmail] = useState(false);
     const [validatedPassword,setValidatedPassword] = useState(false);
     const [validatedConfirmPassword,setvalidatedConfirmPassword] = useState(false);
+
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if(localStorage.getItem("details")){
+            navigate("/profile")
+        }
+       
+       
+      },[])
 
     function handleEmail(e){
         const newEmail = e.target.value;
@@ -76,11 +88,22 @@ function SignUp(){
       function handleSubmit(event){
          event.preventDefault();
          if(validatedEmail && validatedPassword && validatedConfirmPassword){
-            alert("form submitted successfully");
+            const details = {
+                name,
+                email,
+                password,
+                confirmPassword,
+                accessToken : uuid()
+            } 
+            console.log(details);
+            localStorage.setItem("details" ,JSON.stringify(details));
+            navigate("/profile");
          }else{
             alert("can’t submit the form");
          }
       }
+
+
     
 
     return(
@@ -88,7 +111,7 @@ function SignUp(){
         <div className="form" onSubmit={handleSubmit}>
           <form className="form">
 
-          <label for="name">Name</label>
+          <label htmlFor="name">Name</label>
             <input type="text"
                 className='input'
                 id="name"
@@ -97,7 +120,7 @@ function SignUp(){
                 required
             />
 
-            <label for="email">Email</label>
+            <label htmlFor="email">Email</label>
             <input type="email"
                 className='input'
                 placeholder="  Enter your email"
@@ -107,7 +130,7 @@ function SignUp(){
             />
              
 
-            <label for="Password">Password</label>
+            <label htmlFor="Password">Password</label>
             <input type="Password"
                 className='input'
                 placeholder=" Enter Password" 
@@ -117,7 +140,7 @@ function SignUp(){
             />
            
 
-            <label for="Password"> Confirm Password</label>
+            <label htmlFor="Password"> Confirm Password</label>
             <input type="Password"
                 className='input'
                 placeholder="  Re-enter Password" 
