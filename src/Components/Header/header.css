@@ -1,0 +1,32 @@
+*{
+    margin: 0;
+    padding: 0;
+    background-color: black;
+    color: white;
+}
+
+#navbar{
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.3rem;
+    height: 50px;
+    padding-top: 23px;
+    padding-left: 30px;
+    border-bottom: 1px solid white;
+}
+#pages_ul{
+    list-style: none;
+    display: flex;
+    justify-content: space-evenly;
+}
+#navlink{
+    text-decoration: none;
+    padding: 20px;
+    margin-right: 100px;
+   
+}
+.active{
+    color: orange;
+}
+
+
