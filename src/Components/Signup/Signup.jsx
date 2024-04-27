@@ -33,74 +33,97 @@
 
 // export default Signup
 
-import React,{ useEffect, useState } from "react"
+import React,{ useEffect, useRef, useState } from "react"
 import "./form.css"
 import { v4 as uuid } from "uuid";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 
 
 function SignUp(){
-    const [name , setName] =useState("")
-    const [email , setEmail] = useState("");
-    const [password , setPassword] = useState("");
-    const [confirmPassword , setConfirmPassword] = useState("");
+    // const [name , setName] =useState("")
+    // const [email , setEmail] = useState("");
+    // const [password , setPassword] = useState("");
+    // const [confirmPassword , setConfirmPassword] = useState("");
 
-    const [validatedEmail,setValidatedEmail] = useState(false);
-    const [validatedPassword,setValidatedPassword] = useState(false);
-    const [validatedConfirmPassword,setvalidatedConfirmPassword] = useState(false);
+    const name1 = useRef();
+    const email1 = useRef();
+    const password1 = useRef();
+    const cPassword1 = useRef();
+
+    // const [validatedEmail,setValidatedEmail] = useState(false);
+    // const [validatedPassword,setValidatedPassword] = useState(false);
+    // const [validatedConfirmPassword,setvalidatedConfirmPassword] = useState(false);
 
     const navigate = useNavigate();
 
     useEffect(() => {
         if(localStorage.getItem("details")){
+            toast.error("User is already logged in !")
             navigate("/profile")
         }
        
        
       },[])
 
-    function handleEmail(e){
-        const newEmail = e.target.value;
-        setEmail(newEmail);
-        setValidatedEmail(validateEmail(newEmail));
-    }
+    // function handleEmail(e){
+    //     const newEmail = e.target.value;
+    //     setEmail(newEmail);
+    //     setValidatedEmail(validateEmail(newEmail));
+    // }
 
-    const validateEmail = (email) => {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailRegex.test(email);
-      };
+    // const validateEmail = (email) => {
+    //     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    //     return emailRegex.test(email);
+    //   };
 
-    function handlePassword(e){
-        const newPassword = e.target.value;
-        setPassword(newPassword);
-        setValidatedPassword( newPassword.length >= 8);
-    }
+    // function handlePassword(e){
+    //     const newPassword = e.target.value;
+    //     setPassword(newPassword);
+    //     setValidatedPassword( newPassword.length >= 8);
+    // }
 
-    function handleConfirmPassword(e){
-        const newConfirmPassword = e.target.value;
-        setConfirmPassword(newConfirmPassword);
-        setvalidatedConfirmPassword(newConfirmPassword === password);
-    }
+    // function handleConfirmPassword(e){
+    //     const newConfirmPassword = e.target.value;
+    //     setConfirmPassword(newConfirmPassword);
+    //     setvalidatedConfirmPassword(newConfirmPassword === password);
+    // }
     
    
 
       function handleSubmit(event){
-         event.preventDefault();
-         if(validatedEmail && validatedPassword && validatedConfirmPassword){
-            const details = {
-                name,
-                email,
-                password,
-                confirmPassword,
-                accessToken : uuid()
-            } 
-            console.log(details);
-            localStorage.setItem("details" ,JSON.stringify(details));
-            navigate("/profile");
-         }else{
-            alert("can’t submit the form");
-         }
+          event.preventDefault();
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+         if(!name1.current.value && !email1.current.value && !password1.current.value && !cPassword1.current.value){
+            toast.error("All fields are mandatory!");
+            return;
+        }
+        if(password1.current.value.length < 8 || password1.current.value.length >20){
+            console.log(password1.current.value.length)
+            toast.error("Password must be between 8 and 20 characters");
+            return;
+        }
+        if(cPassword1.current.value !== password1.current.value ){
+            toast.error("Password and confirnm password should be same!")
+            return;
+        }
+        if(!emailRegex.test(email1.current.value)){
+            toast.error("Invalid Email!");
+            return;
+        }
+        const details = {
+            name : name1.current.value,
+            email : email1.current.value,
+            password : password1.current.value,
+            confirmPassword : cPassword1.current.value,
+            accessToken : uuid()
+        } 
+        console.log(details);
+        localStorage.setItem("details" ,JSON.stringify(details));
+        toast.success("User logged in successfully");
+        navigate("/profile");
+        // toast.error("Can't submit the form");
       }
 
 
@@ -116,17 +139,19 @@ function SignUp(){
                 className='input'
                 id="name"
                 placeholder="  Enter your name"
-                onChange={(e) => {setName(e.target.value)}}
-                required
+                // onChange={(e) => {setName(e.target.value)}}
+                ref={name1}
+            
             />
 
             <label htmlFor="email">Email</label>
-            <input type="email"
+            <input type="text"
                 className='input'
                 placeholder="  Enter your email"
-                 onChange={handleEmail}
+                //  onChange={handleEmail}
+                ref={email1}
                 // value = {email}
-                required
+               
             />
              
 
@@ -135,8 +160,9 @@ function SignUp(){
                 className='input'
                 placeholder=" Enter Password" 
                 // value = {password}
-                onChange={handlePassword}
-                required
+                // onChange={handlePassword}
+                ref={password1}
+                
             />
            
 
@@ -145,10 +171,11 @@ function SignUp(){
                 className='input'
                 placeholder="  Re-enter Password" 
                 // value = {confirmPassword}
-                onChange={handleConfirmPassword}
-                required
+                // onChange={handleConfirmPassword}
+                ref={cPassword1}
+                
             />
-           {!validatedConfirmPassword && !validatedPassword && !validatedEmail && name &&<span className="validate"  style={{ color: 'red' }}>Error : All the fields are mandatory</span>}
+           
 
             <div className='divBtn'>
                 <button

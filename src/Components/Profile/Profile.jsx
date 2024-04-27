@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify';
 
 function Profile() {
 
@@ -8,6 +9,7 @@ function Profile() {
 
   useEffect(() => {
     if(!localStorage.getItem("details")){
+      toast.error("User is not logged in!")
         navigate("/")
     }
     setUserDetails(JSON.parse(localStorage.getItem("details")));
